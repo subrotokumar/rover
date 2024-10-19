@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -18,7 +17,7 @@ func NewDefaultConfig() *Config {
 }
 
 func (c *Config) Banner() {
-	fmt.Printf("%s", LOGO)
+	printLogo()
 	log.Printf("Rover Server running")
 	log.Printf("Port:\t\t%s", c.PORT)
 	log.Printf("Documentation:\thttps://rover.subrotokumar.dev")
