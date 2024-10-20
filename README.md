@@ -24,6 +24,7 @@
 - 🔌 **Standalone Mode**: Run Rover as a standalone server
 - 🔐 **Secure**: (TODO: Add security features)
 - 🎨 **Beautiful CLI**: Eye-catching command-line interface with color support
+- 👾 **Command Supported**: ping, set, get, del, exists, incr, incrby, decr, decrby, flashall
 
 ## 🛠 Installation
 
@@ -37,8 +38,8 @@ docker run -d --name rover -p 8989:8989 subrotokumar/rover
 - **Lightweight**: Minimal dependencies for a small footprint
 - **Extensible**: Easy to add new features and commands
 
-<!-- ## 📜 License
-Rover is released under the License. See the LICENSE  file for details. -->
+## 📜 License
+Rover is released under the Apache License Version 2.0 License. See the [LICENSE](./LICENSE) file for details.
 
 ## 🙏 Acknowledgements
 - Inspired by Redis 

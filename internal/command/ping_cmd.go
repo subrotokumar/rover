@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"log"
 )
 
 type PingCommand struct {
@@ -12,15 +11,14 @@ func NewPingCommand() Command {
 	return &PingCommand{}
 }
 
-func (c *PingCommand) Execute(cmd []string) (string, error) {
-	log.Printf("Length %d", len(cmd))
+func (c *PingCommand) Execute(cmd []string) string {
 	switch len(cmd) {
 	case 1:
-		return "+PONG\r\n", nil
+		return "+PONG\r\n"
 	case 2:
-		return fmt.Sprintf("$%d\r\n%s\r\n", len(cmd[1]), cmd[1]), nil
+		return fmt.Sprintf("$%d\r\n%s\r\n", len(cmd[1]), cmd[1])
 	default:
 		fmt.Println("Hello World")
-		return "-ERR wrong number of arguments for 'ping' command", nil
+		return "-ERR wrong number of arguments for 'ping' command\r\n"
 	}
 }

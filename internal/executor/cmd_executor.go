@@ -21,11 +21,7 @@ func (e *commandExecuter) Execute(cmd []string) {
 		return
 	}
 	commandRunner := command.CommandFactory(cmd)
-	response, err := commandRunner.Execute(cmd)
-	if err != nil {
-		e.conn.Write([]byte("-ERR " + err.Error()))
-		return
-	}
+	response := commandRunner.Execute(cmd)
 	log.Printf("Response => %s", response)
 	e.conn.Write([]byte(response))
 }

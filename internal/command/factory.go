@@ -12,15 +12,19 @@ func CommandFactory(cmd []string) Command {
 	case "GET":
 		return NewGetCommand()
 	case "DEL":
-		return NewErrCommand()
+		return NewDelCommand()
 	case "EXISTS":
-		return NewErrCommand()
+		return NewExistsCommand()
 	case "INCR":
-		return NewErrCommand()
+		return NewIncrCommand()
 	case "INCRBY":
-		return NewErrCommand()
+		return NewIncrByCommand()
+	case "DECR":
+		return NewDecrCommand()
+	case "DECRBY":
+		return NewDecrByCommand()
 	case "FLUSHALL":
-		return NewErrCommand()
+		return NewFlushAllCommand()
 	default:
 		return NewErrCommand()
 	}

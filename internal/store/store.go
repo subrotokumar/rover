@@ -79,3 +79,10 @@ func (m *SafeMap[K, V]) ContainsKey(key K) bool {
 	_, ok := m.data[key]
 	return ok
 }
+
+func (m *SafeMap[K, V]) DeleteAll() {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	m.data = make(map[K]V)
+}
