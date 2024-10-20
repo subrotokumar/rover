@@ -1,6 +1,4 @@
-package config
-
-import "fmt"
+package app
 
 const LOGO string = `                                                                               
              +%%*.
@@ -25,7 +23,3 @@ const LOGO string = `
           .:-:        .:-:        .:-:      
                                            
 `
-
-func printLogo() {
-	fmt.Println(LOGO)
-}

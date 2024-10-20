@@ -1,28 +1,31 @@
 package app
 
 import (
+	"fmt"
 	"log"
-	"net"
 
-	"github.com/subrotokumar/rover/internal/executor"
 	"github.com/subrotokumar/rover/internal/parser"
 )
 
-var (
-	printf  = log.Printf
-	println = log.Println
-)
-
 type App struct {
-	conn     net.Conn
-	parser   parser.Parser
-	executor executor.Executer
+	PORT    string
+	VERSION string
+
+	parser parser.Parser
 }
 
-func NewApplication(conn net.Conn) *App {
+func NewApplication() *App {
 	return &App{
-		conn:     conn,
-		parser:   parser.NewRespParser(),
-		executor: executor.NewExecutor(conn),
+		PORT:    "8989",
+		VERSION: "v0.1.0",
+		parser:  parser.NewRespParser(),
 	}
+}
+
+func (c *App) Banner() {
+	fmt.Printf("%s", LOGO)
+	log.Printf("Rover Server running")
+	log.Printf("Port:\t\t%s", c.PORT)
+	log.Printf("Documentation:\thttps://rover.subrotokumar.dev")
+	log.Printf("Source code:\thttps://github.com/subrotokumar/rover")
 }

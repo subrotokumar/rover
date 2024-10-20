@@ -3,64 +3,69 @@ package app
 import (
 	"fmt"
 	"io"
+	"log"
 	"net"
-	"os"
 
-	"github.com/subrotokumar/rover/internal/config"
+	"github.com/subrotokumar/rover/internal/executor"
 )
 
 func Serve() {
-	cfg := config.NewDefaultConfig()
-	cfg.Banner()
-	l, err := net.Listen("tcp", "0.0.0.0:"+cfg.PORT)
-	if err != nil {
-		printf("Failed to bind to port %s", cfg.PORT)
-		os.Exit(1)
-	}
+	app := NewApplication()
+	app.Banner()
 
-	c, err := l.Accept()
-	cfg.Banner()
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", app.PORT))
 	if err != nil {
-		println("Error accepting connection: ", err.Error())
-		os.Exit(1)
+		log.Fatalf("Failed to bind to port %s: %v", app.PORT, err)
 	}
-	defer c.Close()
-	println("Sdsdd")
-	cfg.Banner()
-	app := NewApplication(c)
-	app.handleRequest(c)
+	defer listener.Close()
+
+	log.Printf("Server listening on port %s", app.PORT)
+
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			log.Printf("Error accepting connection: %v", err)
+			continue
+		}
+
+		go app.handleConnection(conn)
+	}
 }
 
-func (app *App) handleRequest(c net.Conn) {
-	for {
-		buf := make([]byte, 128)
-		_, err := c.Read(buf)
+func (app *App) handleConnection(conn net.Conn) {
+	defer conn.Close()
+	log.Printf("New connection from %s", conn.RemoteAddr())
 
+	app.handleRequest(conn)
+}
+
+func (app *App) handleRequest(conn net.Conn) {
+	buf := make([]byte, 1024)
+	executor := executor.NewExecutor(conn)
+	for {
+		n, err := conn.Read(buf)
 		if err != nil {
 			if err == io.EOF {
+				log.Printf("Client %s disconnected", conn.RemoteAddr())
 				break
 			}
-			fmt.Println("error reading from client: ", err.Error())
-			os.Exit(1)
+			log.Printf("Error reading from client: %v", err)
+			break
 		}
-		parsedCmd, err := app.parser.Parse(buf)
+
+		parsedCmd, err := app.parser.Parse(buf[:n])
 		if err != nil {
-			println("Unable to parse ", err)
+			log.Printf("Unable to parse: %v", err)
+			continue
 		}
+
 		cmd, ok := parsedCmd.([]string)
 		if !ok {
-			fmt.Println("Failed to assert the parsed command to []string")
-			return
-		} else {
-			printf("CMD => %v\n", cmd)
+			log.Println("Failed to assert the parsed command to []string")
+			continue
 		}
-		app.ExecuteCmd(cmd)
-	}
-}
 
-func (app *App) ExecuteCmd(cmd []string) {
-	err := app.executor.Execute(cmd)
-	if err != nil {
-		printf("%s", err.Error())
+		log.Printf("Received command => %v", cmd)
+		executor.Execute(cmd)
 	}
 }
