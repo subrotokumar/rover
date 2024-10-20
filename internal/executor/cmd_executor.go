@@ -26,6 +26,6 @@ func (e *commandExecuter) Execute(cmd []string) {
 		e.conn.Write([]byte("-ERR " + err.Error()))
 		return
 	}
-	log.Printf("Final %s", response)
+	log.Printf("Response => %s", response)
 	e.conn.Write([]byte(response))
 }

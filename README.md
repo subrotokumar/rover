@@ -5,7 +5,7 @@
 
   An in-memory key-value store inspired by Redis, rewritten from the ground up in Go.
 
-  [![Go Version](https://img.shields.io/badge/Go-1.20+-00ADD8?style=for-the-badge&logo=go)](https://golang.org)
+  [![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?style=for-the-badge&logo=go)](https://golang.org)
   [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
   [![Stars](https://img.shields.io/github/stars/subrotokumar/rover.svg?style=for-the-badge)](https://github.com/subrotokumar/rover/stargazers)
 

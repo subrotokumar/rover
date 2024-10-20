@@ -23,5 +23,4 @@ func (c *PingCommand) Execute(cmd []string) (string, error) {
 		fmt.Println("Hello World")
 		return "-ERR wrong number of arguments for 'ping' command", nil
 	}
-
 }

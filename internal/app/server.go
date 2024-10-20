@@ -19,8 +19,6 @@ func Serve() {
 	}
 	defer listener.Close()
 
-	log.Printf("Server listening on port %s", app.PORT)
-
 	for {
 		conn, err := listener.Accept()
 		if err != nil {

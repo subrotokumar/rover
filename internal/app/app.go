@@ -5,12 +5,14 @@ import (
 	"log"
 
 	"github.com/subrotokumar/rover/internal/parser"
+	"github.com/subrotokumar/rover/internal/store"
 )
 
 type App struct {
 	PORT    string
 	VERSION string
 
+	store  *store.SafeMap[string, interface{}]
 	parser parser.Parser
 }
 
@@ -18,6 +20,7 @@ func NewApplication() *App {
 	return &App{
 		PORT:    "8989",
 		VERSION: "v0.1.0",
+		store:   store.GetInstance(),
 		parser:  parser.NewRespParser(),
 	}
 }
