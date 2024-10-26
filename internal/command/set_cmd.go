@@ -31,12 +31,14 @@ func (c *SetCommand) Execute(cmd []string) string {
 		getOldValue    bool
 	)
 
-	for i := 3; i <= 6; i++ {
+	for i := 3; i < len(cmd); i++ {
+		fmt.Printf("%d", i)
+		fmt.Printf("%s", cmd[i])
 		part := strings.ToUpper(cmd[i])
 
 		switch part {
 		case "EX":
-			if i+1 <= 6 {
+			if i+1 <= 6 && i+1 < len(cmd) {
 				seconds, err := strconv.Atoi(cmd[i+1])
 				if err != nil {
 					return "-ERR invalid expire time in 'set' command\r\n"
@@ -48,7 +50,7 @@ func (c *SetCommand) Execute(cmd []string) string {
 			}
 
 		case "PX":
-			if i+1 <= 6 {
+			if i+1 <= 6 && i+1 < len(cmd) {
 				milliseconds, err := strconv.Atoi(cmd[i+1])
 				if err != nil {
 					return "-ERR invalid expire time in 'set' command\r\n"

@@ -25,7 +25,7 @@
 - 🔐 **Secure**: (TODO: Add security features)
 - 🎨 **Beautiful CLI**: Eye-catching command-line interface with color support
 - 👾 **Robust Command Support**:
-  - *Data Commands*: __ping__, __get__, __set__ (with options: NX/XX, EX/PX, GET), __del__, __exists__
+  - *Data Commands*: __ping__, __get__, __set__ (with options: NX/XX, EX/PX, GET), __del__, __exists__, __append__
   - *Counter Commands*: __incr__, __incrby__, __decr__, __decrby__
   - *Utility Commands*: __flushall__ (clear all keys), __strlen__ (check string length)
 

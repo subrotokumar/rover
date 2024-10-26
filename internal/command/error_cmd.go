@@ -14,6 +14,6 @@ func (c *ErrCommand) Execute(cmd []string) string {
 	case 1:
 		return fmt.Sprintf("-ERR unknown command '%s', with args beginning with:\r\n", cmd[0])
 	default:
-		return fmt.Sprintf("-ERR unknown command 'exist', with args beginning with: '%s'\r\n", cmd[1])
+		return fmt.Sprintf("-ERR unknown command 'exist', with args beginning with: '%s'\r\n", cmd[0])
 	}
 }

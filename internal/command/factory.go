@@ -27,6 +27,8 @@ func CommandFactory(cmd []string) Command {
 		return NewStrLenCommand()
 	case "FLUSHALL":
 		return NewFlushAllCommand()
+	case "APPEND":
+		return NewAppendCommand()
 	default:
 		return NewErrCommand()
 	}
