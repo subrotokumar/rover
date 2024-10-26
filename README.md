@@ -3,7 +3,7 @@
 
   # Rover
 
-  An in-memory key-value store inspired by Redis, rewritten from the ground up in Go.
+  In-memory key-value store inspired by Redis, rewritten from the ground up in Go.
 
   [![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?style=for-the-badge&logo=go)](https://golang.org)
   [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
@@ -24,7 +24,10 @@
 - 🔌 **Standalone Mode**: Run Rover as a standalone server
 - 🔐 **Secure**: (TODO: Add security features)
 - 🎨 **Beautiful CLI**: Eye-catching command-line interface with color support
-- 👾 **Command Supported**: ping, set, get, del, exists, incr, incrby, decr, decrby, flashall
+- 👾 **Robust Command Support**:
+  - *Data Commands*: __ping__, __get__, __set__ (with options: NX/XX, EX/PX, GET), __del__, __exists__
+  - *Counter Commands*: __incr__, __incrby__, __decr__, __decrby__
+  - *Utility Commands*: __flushall__ (clear all keys), __strlen__ (check string length)
 
 ## 🛠 Installation
 

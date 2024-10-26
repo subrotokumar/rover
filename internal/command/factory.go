@@ -23,6 +23,8 @@ func CommandFactory(cmd []string) Command {
 		return NewDecrCommand()
 	case "DECRBY":
 		return NewDecrByCommand()
+	case "STRLEN":
+		return NewStrLenCommand()
 	case "FLUSHALL":
 		return NewFlushAllCommand()
 	default:

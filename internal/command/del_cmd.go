@@ -15,7 +15,7 @@ func NewDelCommand() Command {
 
 func (c *DelCommand) Execute(cmd []string) string {
 	if len(cmd) < 2 {
-		return "-ERR wrong number of arguments for 'set' command\r\n"
+		return "-ERR wrong number of arguments for 'del' command\r\n"
 	}
 	store := store.GetInstance()
 	count := 0

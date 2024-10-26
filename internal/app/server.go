@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"time"
 
 	"github.com/subrotokumar/rover/internal/executor"
 )
@@ -42,6 +43,7 @@ func (app *App) handleRequest(conn net.Conn) {
 	executor := executor.NewExecutor(conn)
 	for {
 		n, err := conn.Read(buf)
+		startedTime := time.Now()
 		if err != nil {
 			if err == io.EOF {
 				log.Printf("Client %s disconnected", conn.RemoteAddr())
@@ -65,5 +67,6 @@ func (app *App) handleRequest(conn net.Conn) {
 
 		log.Printf("Received command => %v", cmd)
 		executor.Execute(cmd)
+		log.Printf("time spent => %v", time.Since(startedTime))
 	}
 }

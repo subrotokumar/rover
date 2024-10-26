@@ -16,7 +16,7 @@ func NewDecrCommand() Command {
 
 func (c *DecrCommand) Execute(cmd []string) string {
 	if len(cmd) != 2 {
-		return "-ERR wrong number of arguments for 'incr' command\r\n"
+		return "-ERR wrong number of arguments for 'decr' command\r\n"
 	}
 	store := store.GetInstance()
 	value, err := store.Get(cmd[1])

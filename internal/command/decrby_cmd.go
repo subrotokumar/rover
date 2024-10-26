@@ -16,7 +16,7 @@ func NewDecrByCommand() Command {
 
 func (c *DecrByCommand) Execute(cmd []string) string {
 	if len(cmd) != 3 {
-		return "-ERR wrong number of arguments for 'incr' command\r\n"
+		return "-ERR wrong number of arguments for 'decrby' command\r\n"
 	}
 	decrBy, err := strconv.Atoi(cmd[2])
 	if err != nil {
