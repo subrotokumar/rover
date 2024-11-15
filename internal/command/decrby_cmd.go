@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/subrotokumar/rover/internal/store"
+	"github.com/subrotokumar/rover/internal/types"
 )
 
 type DecrByCommand struct {
@@ -26,15 +27,16 @@ func (c *DecrByCommand) Execute(cmd []string) string {
 	store := store.GetInstance()
 	value, err := store.Get(cmd[1])
 	if err != nil {
-		store.Insert(cmd[1], decrBy)
+		store.Insert(cmd[1], types.StoredValue{Value: value})
 		return fmt.Sprintf(":%d\r\n", decrBy)
 	}
 
-	valueNum, err := strconv.Atoi(fmt.Sprintf("%v", value))
+	valueNum, err := strconv.Atoi(value.String())
 	if err != nil {
 		return "-ERR value is not an integer or out of range\r\n"
 	}
 	valueNum = valueNum + decrBy
-	store.Insert(cmd[1], valueNum)
+	value.Value = valueNum
+	store.Insert(cmd[1], value)
 	return fmt.Sprintf(":%d\r\n", valueNum)
 }

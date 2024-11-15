@@ -78,41 +78,38 @@ func (c *SetCommand) Execute(cmd []string) string {
 		return "-ERR NX and XX options at the same time are not compatible\r\n"
 	}
 
-	var oldValue interface{}
+	var oldValue types.StoredValue
 	if getOldValue {
 		oldValue, _ = store.Get(key)
 	}
 
 	existing, _ := store.Get(key)
-	if setIfNotExists && existing != nil {
+	if (setIfNotExists && existing != types.StoredValue{}) {
 		return "$-1\r\n"
 	}
-	if setIfExists && existing == nil {
+	if (setIfExists && existing == types.StoredValue{}) {
 		return "$-1\r\n"
 	}
 
 	if expireDuration > 0 {
-		store.Insert(key, types.ExpirableValue{
+		store.Insert(key, types.StoredValue{
 			Value:    value,
 			ExpireAt: time.Now().Add(expireDuration),
 		})
 	} else {
-		store.Insert(key, value)
+		store.Insert(key, types.StoredValue{
+			Value:    value,
+			ExpireAt: time.Time{},
+		})
 	}
 
 	if getOldValue {
-		if expirableVal, ok := oldValue.(types.ExpirableValue); ok {
-			if time.Now().After(expirableVal.ExpireAt) {
-				go store.Delete(key)
-				return "$-1\r\n"
-			}
-			oldValueStr := fmt.Sprintf("%v", expirableVal.Value)
-			return fmt.Sprintf("$%d\r\n%s\r\n", len(oldValueStr), oldValueStr)
-		} else {
-			oldValueStr := fmt.Sprintf("%v", value)
-			return fmt.Sprintf("$%d\r\n%s\r\n", len(oldValueStr), oldValueStr)
+		if oldValue.IsExpired() {
+			go store.Delete(key)
+			return "$-1\r\n"
 		}
-
+		oldValueStr := oldValue.String()
+		return fmt.Sprintf("$%d\r\n%s\r\n", len(oldValueStr), oldValueStr)
 	}
 	return "+OK\r\n"
 

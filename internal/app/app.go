@@ -6,13 +6,14 @@ import (
 
 	"github.com/subrotokumar/rover/internal/parser"
 	"github.com/subrotokumar/rover/internal/store"
+	"github.com/subrotokumar/rover/internal/types"
 )
 
 type App struct {
 	PORT    string
 	VERSION string
 
-	store  *store.SafeMap[string, interface{}]
+	store  *store.SafeMap[string, types.StoredValue]
 	parser parser.Parser
 }
 

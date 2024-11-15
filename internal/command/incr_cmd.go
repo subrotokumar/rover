@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/subrotokumar/rover/internal/store"
+	"github.com/subrotokumar/rover/internal/types"
 )
 
 type IncrCommand struct {
@@ -21,7 +22,7 @@ func (c *IncrCommand) Execute(cmd []string) string {
 	store := store.GetInstance()
 	value, err := store.Get(cmd[1])
 	if err != nil {
-		store.Insert(cmd[1], "1")
+		store.Insert(cmd[1], types.StoredValue{Value: "1"})
 		return ":1\r\n"
 	}
 
@@ -30,6 +31,6 @@ func (c *IncrCommand) Execute(cmd []string) string {
 		return "-ERR value is not an integer or out of range\r\n"
 	}
 	valueNum++
-	store.Insert(cmd[1], valueNum)
+	store.Insert(cmd[1], types.StoredValue{Value: valueNum})
 	return fmt.Sprintf(":%d\r\n", valueNum)
 }

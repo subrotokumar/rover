@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"sync"
+
+	"github.com/subrotokumar/rover/internal/types"
 )
 
 type SafeMap[K comparable, V any] struct {
@@ -12,16 +14,16 @@ type SafeMap[K comparable, V any] struct {
 }
 
 var (
-	instance *SafeMap[string, interface{}]
+	instance *SafeMap[string, types.StoredValue]
 	once     sync.Once
 )
 
 // GetInstance returns the singleton instance of SafeMap
-func GetInstance() *SafeMap[string, interface{}] {
+func GetInstance() *SafeMap[string, types.StoredValue] {
 	once.Do(func() {
 		log.Printf("Rover Store is initialized")
-		instance = &SafeMap[string, interface{}]{
-			data: make(map[string]interface{}),
+		instance = &SafeMap[string, types.StoredValue]{
+			data: make(map[string]types.StoredValue),
 		}
 	})
 	return instance

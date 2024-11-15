@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-	"time"
 
 	"github.com/subrotokumar/rover/internal/store"
 	"github.com/subrotokumar/rover/internal/types"
@@ -27,7 +26,7 @@ func (c *AppendCommand) Execute(cmd []string) string {
 	store := store.GetInstance()
 	value, err := store.Get(key)
 
-	if value == nil {
+	if (value == types.StoredValue{}) {
 		return AppendNew(store, key, newValue)
 	}
 	if err != nil {
@@ -42,28 +41,23 @@ func (c *AppendCommand) Execute(cmd []string) string {
 		}
 	}
 
-	if expirableVal, ok := value.(types.ExpirableValue); ok {
-		if time.Now().After(expirableVal.ExpireAt) {
-			store.Delete(key)
-			return AppendNew(store, key, newValue)
-		} else {
-			var builder strings.Builder
-			builder.WriteString(fmt.Sprintf("%v", expirableVal.Value))
-			builder.WriteString(newValue)
-			expirableVal.Value = interface{}(builder.String())
-			store.Insert(key, expirableVal)
-			return fmt.Sprintf(":%d\r\n", builder.Len())
-		}
+	if value.IsExpired() {
+		store.Delete(key)
+		return AppendNew(store, key, newValue)
 	} else {
 		var builder strings.Builder
-		builder.WriteString(fmt.Sprintf("%v", value))
+		builder.WriteString(value.String())
 		builder.WriteString(newValue)
+		value.Value = interface{}(builder.String())
+		store.Insert(key, value)
 		return fmt.Sprintf(":%d\r\n", builder.Len())
 	}
 
 }
 
-func AppendNew(store *store.SafeMap[string, interface{}], key, value string) string {
-	store.Insert(key, value)
+func AppendNew(store *store.SafeMap[string, types.StoredValue], key, value string) string {
+	store.Insert(key, types.StoredValue{
+		Value: value,
+	})
 	return fmt.Sprintf(":%d\r\n", len(value))
 }
