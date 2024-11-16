@@ -1,5 +1,5 @@
 package executor
 
 type Executer interface {
-	Execute(cmd []string)
+	Execute(db int, cmd []string) string
 }

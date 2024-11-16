@@ -5,6 +5,8 @@ import (
 	"io"
 	"log"
 	"net"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/subrotokumar/rover/internal/executor"
@@ -20,6 +22,7 @@ func Serve() {
 	}
 	defer listener.Close()
 
+	log.Println("* Ready to accept connections tcp")
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -41,32 +44,44 @@ func (app *App) handleConnection(conn net.Conn) {
 func (app *App) handleRequest(conn net.Conn) {
 	buf := make([]byte, 1024)
 	executor := executor.NewExecutor(conn)
+	db := 0
 	for {
 		n, err := conn.Read(buf)
-		startedTime := time.Now()
+		start := time.Now()
 		if err != nil {
 			if err == io.EOF {
-				log.Printf("Client %s disconnected", conn.RemoteAddr())
+				log.Printf("- ERR Client %s disconnected", conn.RemoteAddr())
 				break
 			}
-			log.Printf("Error reading from client: %v", err)
+			log.Printf("- ERR reading from client: %v", err)
 			break
 		}
-
 		parsedCmd, err := app.parser.Parse(buf[:n])
 		if err != nil {
-			log.Printf("Unable to parse: %v", err)
+			conn.Write([]byte("- ERR Unable to parse input: %v"))
 			continue
 		}
 
 		cmd, ok := parsedCmd.([]string)
 		if !ok {
-			log.Println("Failed to assert the parsed command to []string")
+			conn.Write([]byte("- ERR Failed to assert the parsed command"))
 			continue
 		}
-
-		log.Printf("Received command => %v", cmd)
-		executor.Execute(cmd)
-		log.Printf("time spent => %v", time.Since(startedTime))
+		if strings.ToUpper(cmd[0]) == "SELECT" && len(cmd) == 2 {
+			n, err := strconv.Atoi(cmd[1])
+			if err != nil {
+				continue
+			} else if n < 0 || n > 15 {
+				conn.Write([]byte("-ERR DB index is out of range\r\n"))
+			}
+			db = n
+			conn.Write([]byte("+OK\r\n"))
+			continue
+		}
+		response := executor.Execute(db, cmd)
+		conn.Write([]byte(response))
+		if app.DebugMode {
+			log.Printf("* %v : %v", cmd, time.Since(start))
+		}
 	}
 }

@@ -10,7 +10,8 @@ import (
 
 type SafeMap[K comparable, V any] struct {
 	mutex sync.RWMutex
-	data  map[K]V
+	ttl   []string
+	data  []map[K]V
 }
 
 var (
@@ -22,25 +23,31 @@ var (
 func GetInstance() *SafeMap[string, types.StoredValue] {
 	once.Do(func() {
 		log.Printf("Rover Store is initialized")
+		ttlList := []string{}
+		maps := make([]map[string]types.StoredValue, 16)
+		for i := range maps {
+			maps[i] = make(map[string]types.StoredValue)
+		}
 		instance = &SafeMap[string, types.StoredValue]{
-			data: make(map[string]types.StoredValue),
+			data: maps,
+			ttl:  ttlList,
 		}
 	})
 	return instance
 }
 
-func (m *SafeMap[K, V]) Insert(key K, value V) {
+func (m *SafeMap[K, V]) Insert(db int, key K, value V) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	m.data[key] = value
+	m.data[db][key] = value
 }
 
-func (m *SafeMap[K, V]) Get(key K) (V, error) {
+func (m *SafeMap[K, V]) Get(db int, key K) (V, error) {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 
-	val, ok := m.data[key]
+	val, ok := m.data[db][key]
 	if !ok {
 		var zero V
 		return zero, fmt.Errorf("key %v not found", key)
@@ -48,43 +55,43 @@ func (m *SafeMap[K, V]) Get(key K) (V, error) {
 	return val, nil
 }
 
-func (m *SafeMap[K, V]) Update(key K, value V) error {
+func (m *SafeMap[K, V]) Update(db int, key K, value V) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	_, ok := m.data[key]
+	_, ok := m.data[db][key]
 	if !ok {
 		return fmt.Errorf("key %v not found", key)
 	}
 
-	m.data[key] = value
+	m.data[db][key] = value
 	return nil
 }
 
-func (m *SafeMap[K, V]) Delete(key K) error {
+func (m *SafeMap[K, V]) Delete(db int, key K) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	_, ok := m.data[key]
+	_, ok := m.data[db][key]
 	if !ok {
 		return fmt.Errorf("key %v not found", key)
 	}
 
-	delete(m.data, key)
+	delete(m.data[db], key)
 	return nil
 }
 
-func (m *SafeMap[K, V]) ContainsKey(key K) bool {
+func (m *SafeMap[K, V]) ContainsKey(db int, key K) bool {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 
-	_, ok := m.data[key]
+	_, ok := m.data[db][key]
 	return ok
 }
 
-func (m *SafeMap[K, V]) DeleteAll() {
+func (m *SafeMap[K, V]) DeleteAll(db int) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	m.data = make(map[K]V)
+	m.data[db] = make(map[K]V)
 }

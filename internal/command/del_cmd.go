@@ -13,14 +13,14 @@ func NewDelCommand() Command {
 	return &DelCommand{}
 }
 
-func (c *DelCommand) Execute(cmd []string) string {
+func (c *DelCommand) Execute(db int, cmd []string) string {
 	if len(cmd) < 2 {
 		return "-ERR wrong number of arguments for 'del' command\r\n"
 	}
 	store := store.GetInstance()
 	count := 0
 	for i := 1; i < len(cmd); i++ {
-		err := store.Delete(cmd[i])
+		err := store.Delete(db, cmd[i])
 		if err == nil {
 			count++
 		}
