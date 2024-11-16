@@ -1,7 +1,6 @@
 package executor
 
 import (
-	"log"
 	"net"
 
 	"github.com/subrotokumar/rover/internal/command"
@@ -15,13 +14,11 @@ func NewExecutor(conn net.Conn) Executer {
 	return &commandExecuter{conn}
 }
 
-func (e *commandExecuter) Execute(cmd []string) {
+func (e *commandExecuter) Execute(db int, cmd []string) string {
 	if len(cmd) == 0 {
-		e.conn.Write([]byte("-ERR empty cmd"))
-		return
+		return "-ERR empty cmd"
 	}
 	commandRunner := command.CommandFactory(cmd)
-	response := commandRunner.Execute(cmd)
-	log.Printf("Response => %s", response)
-	e.conn.Write([]byte(response))
+	response := commandRunner.Execute(db, cmd)
+	return response
 }

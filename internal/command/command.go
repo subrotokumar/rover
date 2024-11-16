@@ -1,5 +1,5 @@
 package command
 
 type Command interface {
-	Execute(cmd []string) string
+	Execute(db int, cmd []string) string
 }

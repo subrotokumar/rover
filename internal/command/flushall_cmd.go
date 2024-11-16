@@ -11,11 +11,11 @@ func NewFlushAllCommand() Command {
 	return &FlushAllCommand{}
 }
 
-func (c *FlushAllCommand) Execute(cmd []string) string {
+func (c *FlushAllCommand) Execute(db int, cmd []string) string {
 	if len(cmd) > 1 {
 		return "-ERR syntax error\r\n"
 	}
 	store := store.GetInstance()
-	store.DeleteAll()
+	store.DeleteAll(db)
 	return "+OK\r\n"
 }

@@ -17,7 +17,7 @@ func NewSetCommand() Command {
 	return &SetCommand{}
 }
 
-func (c *SetCommand) Execute(cmd []string) string {
+func (c *SetCommand) Execute(db int, cmd []string) string {
 	if len(cmd) < 3 || len(cmd) > 6 {
 		return "-ERR wrong number of arguments for 'set' command\r\n"
 	}
@@ -80,10 +80,10 @@ func (c *SetCommand) Execute(cmd []string) string {
 
 	var oldValue types.StoredValue
 	if getOldValue {
-		oldValue, _ = store.Get(key)
+		oldValue, _ = store.Get(db, key)
 	}
 
-	existing, _ := store.Get(key)
+	existing, _ := store.Get(db, key)
 	if (setIfNotExists && existing != types.StoredValue{}) {
 		return "$-1\r\n"
 	}
@@ -92,12 +92,12 @@ func (c *SetCommand) Execute(cmd []string) string {
 	}
 
 	if expireDuration > 0 {
-		store.Insert(key, types.StoredValue{
+		store.Insert(db, key, types.StoredValue{
 			Value:    value,
 			ExpireAt: time.Now().Add(expireDuration),
 		})
 	} else {
-		store.Insert(key, types.StoredValue{
+		store.Insert(db, key, types.StoredValue{
 			Value:    value,
 			ExpireAt: time.Time{},
 		})
@@ -105,7 +105,7 @@ func (c *SetCommand) Execute(cmd []string) string {
 
 	if getOldValue {
 		if oldValue.IsExpired() {
-			go store.Delete(key)
+			go store.Delete(db, key)
 			return "$-1\r\n"
 		}
 		oldValueStr := oldValue.String()

@@ -23,6 +23,7 @@
 - 🔄 **Concurrent**: Utilizes Go's goroutines for efficient multi-client handling
 - 🔌 **Standalone Mode**: Run Rover as a standalone server
 - 🔐 **Secure**: (TODO: Add security features)
+- 🫙 **Managing Databases**: Out of the box, a Rover instance supports 16 logical databases
 - 🎨 **Beautiful CLI**: Eye-catching command-line interface with color support
 - 👾 **Robust Command Support**:
   - *Data Commands*: __ping__, __get__, __set__ (with options: NX/XX, EX/PX, GET), __del__, __exists__, __append__

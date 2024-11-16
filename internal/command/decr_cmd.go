@@ -15,14 +15,14 @@ func NewDecrCommand() Command {
 	return &DecrCommand{}
 }
 
-func (c *DecrCommand) Execute(cmd []string) string {
+func (c *DecrCommand) Execute(db int, cmd []string) string {
 	if len(cmd) != 2 {
 		return "-ERR wrong number of arguments for 'decr' command\r\n"
 	}
 	store := store.GetInstance()
-	value, err := store.Get(cmd[1])
+	value, err := store.Get(db, cmd[1])
 	if err != nil {
-		store.Insert(cmd[1], types.StoredValue{Value: -1})
+		store.Insert(db, cmd[1], types.StoredValue{Value: -1})
 		return ":-1\r\n"
 	}
 
@@ -32,6 +32,6 @@ func (c *DecrCommand) Execute(cmd []string) string {
 	}
 	valueNum--
 	value.Value = valueNum
-	store.Insert(cmd[1], value)
+	store.Insert(db, cmd[1], value)
 	return fmt.Sprintf(":%d\r\n", valueNum)
 }

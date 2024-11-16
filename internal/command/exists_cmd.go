@@ -13,14 +13,14 @@ func NewExistsCommand() Command {
 	return &ExistsCommand{}
 }
 
-func (c *ExistsCommand) Execute(cmd []string) string {
+func (c *ExistsCommand) Execute(db int, cmd []string) string {
 	if len(cmd) < 2 {
 		return "-ERR wrong number of arguments for 'exists' command\r\n"
 	}
 	store := store.GetInstance()
 	count := 0
 	for i := 1; i < len(cmd); i++ {
-		if ok := store.ContainsKey(cmd[i]); ok {
+		if ok := store.ContainsKey(db, cmd[i]); ok {
 			count++
 		}
 	}

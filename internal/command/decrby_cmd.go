@@ -15,7 +15,7 @@ func NewDecrByCommand() Command {
 	return &DecrByCommand{}
 }
 
-func (c *DecrByCommand) Execute(cmd []string) string {
+func (c *DecrByCommand) Execute(db int, cmd []string) string {
 	if len(cmd) != 3 {
 		return "-ERR wrong number of arguments for 'decrby' command\r\n"
 	}
@@ -25,9 +25,9 @@ func (c *DecrByCommand) Execute(cmd []string) string {
 	}
 	decrBy = decrBy * -1
 	store := store.GetInstance()
-	value, err := store.Get(cmd[1])
+	value, err := store.Get(db, cmd[1])
 	if err != nil {
-		store.Insert(cmd[1], types.StoredValue{Value: value})
+		store.Insert(db, cmd[1], types.StoredValue{Value: value})
 		return fmt.Sprintf(":%d\r\n", decrBy)
 	}
 
@@ -37,6 +37,6 @@ func (c *DecrByCommand) Execute(cmd []string) string {
 	}
 	valueNum = valueNum + decrBy
 	value.Value = valueNum
-	store.Insert(cmd[1], value)
+	store.Insert(db, cmd[1], value)
 	return fmt.Sprintf(":%d\r\n", valueNum)
 }

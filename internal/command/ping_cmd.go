@@ -11,7 +11,7 @@ func NewPingCommand() Command {
 	return &PingCommand{}
 }
 
-func (c *PingCommand) Execute(cmd []string) string {
+func (c *PingCommand) Execute(db int, cmd []string) string {
 	switch len(cmd) {
 	case 1:
 		return "+PONG\r\n"

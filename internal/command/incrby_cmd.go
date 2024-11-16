@@ -15,7 +15,7 @@ func NewIncrByCommand() Command {
 	return &IncrByCommand{}
 }
 
-func (c *IncrByCommand) Execute(cmd []string) string {
+func (c *IncrByCommand) Execute(db int, cmd []string) string {
 	if len(cmd) != 3 {
 		return "-ERR wrong number of arguments for 'incrby' command\r\n"
 	}
@@ -24,9 +24,9 @@ func (c *IncrByCommand) Execute(cmd []string) string {
 		return "-ERR value is not an integer or out of range\r\n"
 	}
 	store := store.GetInstance()
-	value, err := store.Get(cmd[1])
+	value, err := store.Get(db, cmd[1])
 	if err != nil {
-		store.Insert(cmd[1], types.StoredValue{Value: incrBy})
+		store.Insert(db, cmd[1], types.StoredValue{Value: incrBy})
 		return fmt.Sprintf(":%d\r\n", incrBy)
 	}
 
@@ -35,6 +35,6 @@ func (c *IncrByCommand) Execute(cmd []string) string {
 		return "-ERR value is not an integer or out of range\r\n"
 	}
 	valueNum = valueNum + incrBy
-	store.Insert(cmd[1], types.StoredValue{Value: valueNum})
+	store.Insert(db, cmd[1], types.StoredValue{Value: valueNum})
 	return fmt.Sprintf(":%d\r\n", valueNum)
 }

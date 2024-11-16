@@ -15,14 +15,14 @@ func NewGetCommand() Command {
 	return &GetCommand{}
 }
 
-func (c *GetCommand) Execute(cmd []string) string {
+func (c *GetCommand) Execute(db int, cmd []string) string {
 	if len(cmd) != 2 {
 		return "-ERR wrong number of arguments for 'get' command\r\n"
 	}
 
 	store := store.GetInstance()
 	key := cmd[1]
-	value, err := store.Get(key)
+	value, err := store.Get(db, key)
 	if (value == types.StoredValue{}) {
 		return "$-1\r\n"
 	}
@@ -39,7 +39,7 @@ func (c *GetCommand) Execute(cmd []string) string {
 	}
 
 	if value.IsExpired() {
-		go store.Delete(key)
+		go store.Delete(db, key)
 		return "$-1\r\n"
 	}
 	valueStr := fmt.Sprintf("%v", value.String())
