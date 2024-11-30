@@ -12,25 +12,29 @@ import (
 )
 
 type App struct {
-	PORT      string
-	VERSION   string
-	DebugMode bool
-	store     *store.SafeMap[string, types.StoredValue]
-	parser    parser.Parser
+	PORT       string
+	VERSION    string
+	DebugMode  bool
+	store      *store.SafeMap[string, types.StoredValue]
+	parser     parser.Parser
+	dir        string
+	dbfilename string
 }
 
-func NewApplication() *App {
+func NewApplication(dir, dbfilename *string) *App {
 	mode := os.Getenv("DEBUG_MODE")
 	debug_mode := false
 	if strings.ToLower(mode) == "true" {
 		debug_mode = true
 	}
 	return &App{
-		PORT:      "8989",
-		DebugMode: debug_mode,
-		VERSION:   "v0.1.0",
-		store:     store.GetInstance(),
-		parser:    parser.NewRespParser(),
+		PORT:       "8989",
+		DebugMode:  debug_mode,
+		VERSION:    "v0.1.0",
+		store:      store.GetInstance(),
+		parser:     parser.NewRespParser(),
+		dir:        *dir,
+		dbfilename: *dbfilename,
 	}
 }
 
